@@ -1,0 +1,20 @@
+It provides the number of EVs in Texas, categorized by ZipCode and merchandise. 
+Please organize the data in an Excel sheet, listing the price and types of vehicles. 
+Create a new excel sheet. 
+Then, categorize the merchandise (which is listed in column in Zip Code sheet) based on whether they are offered as HEV, PHEV, or BEV.
+Note that some vehicles might come with multiple options. You are welcome to play around with data to run descriptive analysis too.
+
+Instructions:
+- Find prices for the given vehicles (Base, Mid, Upper)/2
+- Find options for HEV, PHEV, or BEV
+
+Concerns:
+- Prices are variable depending on how new the vehicle is.
+    - Some vehicles in the list have been discontinued whilst other ones have brand new version (disproportinately higher prices)
+    - Because the registration data was likely captured with most cars of the 2023 year or earliest available price, I did not include 2024 prices.
+    - Capturing 2024 prices could present current pricing but likely does not accurately represent consumer car purchase behavior.
+
+- Many options have multiple price tiers, some vehicles have tiers that include a gasoline engine at the higher price point
+- or vice versa. Should I create invididual columns for prices of the gasoline + battery options?
+
+- The used car market prices may be considered depending on what the analysis is.
