@@ -21,125 +21,67 @@ def main():
     # Exclude data points where both x and y values are 0 for NUM_PHEV and AVG_PRICE_PHEV
     avg_prices_phev = avg_prices[(avg_prices['NUM_PHEV'] != 0) & (avg_prices['AVG_PRICE_PHEV'] != 0)]
 
-    # Calculate the mean of 'AVG_PRICE_PHEV'
+    # Filter data for the PHEV chart: 5000 < AVG_PRICE_PHEV < 110000
+    avg_prices_phev = avg_prices_phev[(avg_prices_phev['AVG_PRICE_PHEV'] > 1000) & (avg_prices_phev['AVG_PRICE_PHEV'] < 110000)]
+
+    # Calculate correlations for NUM_PHEV and AVG_PRICE_PHEV
+    corr_phev, corr_phev_pvalue = pearsonr(avg_prices_phev['NUM_PHEV'], avg_prices_phev['AVG_PRICE_PHEV'])
+    corr_phev = round(corr_phev, 4)
+    print("\nThe Pearson Correlation Coefficient for number of PHEV and Average Price by Zipcode:", corr_phev)
+    print("The corresponding P-value:", corr_phev_pvalue)
+
+    # Calculate mean for AVG_PRICE_PHEV
     mean_phev = avg_prices_phev['AVG_PRICE_PHEV'].mean()
 
-    # Create a DataFrame for data before or equal to the mean
-    data_before_mean = avg_prices_phev[avg_prices_phev['AVG_PRICE_PHEV'] <= mean_phev]
+    # PHEV STYLING:
+    # ---------
 
-    # Create a DataFrame for data after the mean
-    data_after_mean = avg_prices_phev[avg_prices_phev['AVG_PRICE_PHEV'] > mean_phev]
-
-    # Calculate correlations for data before and after the mean
-    corr_before_mean, corr_before_mean_pvalue = pearsonr(data_before_mean['NUM_PHEV'], data_before_mean['AVG_PRICE_PHEV'])
-    corr_after_mean, corr_after_mean_pvalue = pearsonr(data_after_mean['NUM_PHEV'], data_after_mean['AVG_PRICE_PHEV'])
-
-    corr_before_mean = round(corr_before_mean, 4)
-    corr_after_mean = round(corr_after_mean, 4)
-
-    # Print correlation figures
-    print("\nCorrelation for data before or equal to the mean:")
-    print(f"Pearson Correlation Coefficient: {corr_before_mean}")
-    print(f"Corresponding P-value: {corr_before_mean_pvalue}")
-
-    print("\nCorrelation for data after the mean:")
-    print(f"Pearson Correlation Coefficient: {corr_after_mean}")
-    print(f"Corresponding P-value: {corr_after_mean_pvalue}")
-
-    # Create the first chart for data before or equal to the mean
-    fig, ax1 = plt.subplots()
-    ax1.set_facecolor('#16253B')
+    # Create a figure and axis with a specific background color (navy blue)
+    fig, ax = plt.subplots()
+    ax.set_facecolor('#16253B')  # Set the background color of the axis
     fig.set_facecolor('#16253B')  # Set the background color of the entire chart
-    ax1.scatter(data_before_mean['AVG_PRICE_PHEV'], data_before_mean['NUM_PHEV'], s=10, color='#99F7AB')
-    ax1.axvline(mean_phev, color='#CE2D4F', linestyle='-', label='Mean')
-    ax1.set_xlabel('Average Price of PHEV Vehicles', labelpad=10)
-    ax1.set_ylabel('Number of PHEV Vehicles', labelpad=10)
-    ax1.set_title('Average PHEV Price vs. Number of PHEV Vehicles (Before Mean)', pad=20)
-    ax1.legend(frameon=False)
-    for text in ax1.legend().get_texts():
+
+    # Create the scatter plot on the axis for NUM_PHEV and AVG_PRICE_PHEV with smaller dots
+    ax.scatter(avg_prices_phev['AVG_PRICE_PHEV'], avg_prices_phev['NUM_PHEV'], s=10, color='#99F7AB') # s=10 ; dot-size , color ; dot-color
+
+    # Add vertical lines for mean
+    ax.axvline(mean_phev, color='#CE2D4F', linestyle='-', label='Mean')
+
+    # Set the color of the x-axis label, y-axis label, and title to #A5C4D4
+    ax.xaxis.label.set_color('#A5C4D4')
+    ax.yaxis.label.set_color('#A5C4D4')
+    ax.title.set_color('#A5C4D4')
+
+    # Set the color of the entire axis, including ticks and spines
+    ax.spines['left'].set_color('#A5C4D4')
+    ax.spines['bottom'].set_color('#A5C4D4')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    # Set the color of ticks (axis numbers) to #A5C4D4
+    ax.tick_params(axis='x', colors='#A5C4D4')
+    ax.tick_params(axis='y', colors='#A5C4D4')
+
+    # Set the padding for the title to add more space
+    ax.set_title('Average PHEV Price v. # PHEV bought per zipcode', pad=20)
+
+    # Set the padding for the x-axis label to add more space
+    ax.set_xlabel('Average Price of PHEV Vehicles', labelpad=10)
+
+    # Set the padding for the y-axis label to add more space
+    ax.set_ylabel('Number of PHEV Vehicles', labelpad=10)
+
+    # Show Legend with a white text color
+    legend = ax.legend(frameon=False)
+    for text in legend.get_texts():
         text.set_color('#A5C4D4')
 
-    # Create the second chart for data after the mean
-    fig, ax2 = plt.subplots()
-    ax2.set_facecolor('#16253B')
-    fig.set_facecolor('#16253B')  # Set the background color of the entire chart
-    ax2.scatter(data_after_mean['AVG_PRICE_PHEV'], data_after_mean['NUM_PHEV'], s=10, color='#99F7AB')
-    ax2.axvline(mean_phev, color='#CE2D4F', linestyle='-', label='Mean')
-    ax2.set_xlabel('Average Price of PHEV Vehicles', labelpad=10)
-    ax2.set_ylabel('Number of PHEV Vehicles', labelpad=10)
-    ax2.set_title('Average PHEV Price vs. Number of PHEV Vehicles (After Mean)', pad=20)
-    ax2.legend(frameon=False)
-    for text in ax2.legend().get_texts():
-        text.set_color('#A5C4D4')
-
-    # Show both plots
+    # Show Plot
     plt.show()
 
-
-    # # Calculate mean for AVG_PRICE_PHEV
-    # mean_phev = avg_prices_phev['AVG_PRICE_PHEV'].mean()
-
-    # # Exclude data points where both x and y values are 0 for NUM_PHEV and AVG_PRICE_PHEV
-    # avg_prices_phev = avg_prices[(avg_prices['NUM_PHEV'] != 0) & (avg_prices['AVG_PRICE_PHEV'] != 0)]
-
-    # # Filter data for the PHEV chart: 5000 < AVG_PRICE_PHEV < 110000
-    # avg_prices_phev = avg_prices_phev[(avg_prices_phev['AVG_PRICE_PHEV'] > 1000) & (avg_prices_phev['AVG_PRICE_PHEV'] < 110000)]
-
-    # # Calculate correlations for NUM_PHEV and AVG_PRICE_PHEV
-    # corr_phev, corr_phev_pvalue = pearsonr(avg_prices_phev['NUM_PHEV'], avg_prices_phev['AVG_PRICE_PHEV'])
-    # corr_phev = round(corr_phev, 4)
-    # print("\nThe Pearson Correlation Coefficient for number of PHEV and Average Price by Zipcode:", corr_phev)
-    # print("The corresponding P-value:", corr_phev_pvalue)
-
-    # # PHEV STYLING:
-    # # ---------
-
-    # # Create a figure and axis with a specific background color (navy blue)
-    # fig, ax = plt.subplots()
-    # ax.set_facecolor('#16253B')  # Set the background color of the axis
-    # fig.set_facecolor('#16253B')  # Set the background color of the entire chart
-
-    # # Create the scatter plot on the axis for NUM_PHEV and AVG_PRICE_PHEV with smaller dots
-    # ax.scatter(avg_prices_phev['AVG_PRICE_PHEV'], avg_prices_phev['NUM_PHEV'], s=10, color='#99F7AB') # s=10 ; dot-size , color ; dot-color
-
-    # # Add vertical lines for mean
-    # ax.axvline(mean_phev, color='#CE2D4F', linestyle='-', label='Mean')
-
-    # # Set the color of the x-axis label, y-axis label, and title to #A5C4D4
-    # ax.xaxis.label.set_color('#A5C4D4')
-    # ax.yaxis.label.set_color('#A5C4D4')
-    # ax.title.set_color('#A5C4D4')
-
-    # # Set the color of the entire axis, including ticks and spines
-    # ax.spines['left'].set_color('#A5C4D4')
-    # ax.spines['bottom'].set_color('#A5C4D4')
-    # ax.spines['top'].set_visible(False)
-    # ax.spines['right'].set_visible(False)
-
-    # # Set the color of ticks (axis numbers) to #A5C4D4
-    # ax.tick_params(axis='x', colors='#A5C4D4')
-    # ax.tick_params(axis='y', colors='#A5C4D4')
-
-    # # Set the padding for the title to add more space
-    # ax.set_title('Average PHEV Price v. # PHEV bought per zipcode', pad=20)
-
-    # # Set the padding for the x-axis label to add more space
-    # ax.set_xlabel('Average Price of PHEV Vehicles', labelpad=10)
-
-    # # Set the padding for the y-axis label to add more space
-    # ax.set_ylabel('Number of PHEV Vehicles', labelpad=10)
-
-    # # Show Legend with a white text color
-    # legend = ax.legend(frameon=False)
-    # for text in legend.get_texts():
-    #     text.set_color('#A5C4D4')
-
-    # # Show Plot
-    # plt.show()
-
-    # # Save Plot
-    # fig.savefig('PHEV.svg', format='svg', dpi=1200)
-    # # fig.savefig('PHEV.png', format='png', dpi=1200)
+    # Save Plot
+    fig.savefig('PHEV.svg', format='svg', dpi=1200)
+    # fig.savefig('PHEV.png', format='png', dpi=1200)
 
 
 
